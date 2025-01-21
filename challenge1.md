@@ -25,8 +25,8 @@ The first challenge in The Big IAM Challenge involves an S3 bucket configured wi
             }
         }
     ]
-.
-### Analysis about the IAM policy
+
+## Analysis about the IAM policy
 
 Public users have access to list objects in the bucket, but only if the prefix starts with files/, and they can retrieve objects (s3:GetObject) within the files/ directory. However, access is restricted for any objects outside the files/ directory, and actions beyond s3:GetObject and s3:ListBucket are not permitted. Interestingly, while the policy grants broad public access, it enforces a specific condition (s3:prefix) to limit the scope of access. Despite this, the unrestricted s3:GetObject action for files/* poses a potential risk of data exfiltration.
 
