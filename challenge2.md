@@ -1,46 +1,51 @@
-# Challenge number 1
+# Challenge number 2
 
 ## Challenge Statement
-The first challenge in The Big IAM Challenge involves an S3 bucket configured with a public IAM policy that allows anyone to perform specific actions under certain conditions. The policy permits the s3:GetObject action on objects within the bucket and the s3:ListBucket action on the bucket itself, but only when the s3:prefix begins with files/*. To solve this challenge, we must list the contents of the files/ directory and retrieve the flag1.txt file contained within it.
+The second challenge in The Big IAM Challenge involves an SQS (Simple Queue Service) queue with an IAM policy that allows public access to send and receive messages. The policy allows anyone to perform the sqs:SendMessage and sqs:ReceiveMessage actions on the wiz-tbic-analytics-sqs-queue-ca7a1b2 queue.
 
 ## IAM Policy
 
+{
     "Version": "2012-10-17",
-    "Statement": [
+    "Statement": 
         {
             "Effect": "Allow",
             "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::thebigiamchallenge-storage-9979f4b/*"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::thebigiamchallenge-storage-9979f4b",
-            "Condition": {
-                "StringLike": {
-                    "s3:prefix": "files/*"
-                }
-            }
+            "Action": 
+                "sqs:SendMessage",
+                "sqs:ReceiveMessage"
+            ,
+            "Resource": "arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2"
         }
-    ]
+}
 
 ## Analysis about the IAM policy
 
-Public users have access to list objects in the bucket, but only if the prefix starts with files/, and they can retrieve objects (s3:GetObject) within the files/ directory. However, access is restricted for any objects outside the files/ directory, and actions beyond s3:GetObject and s3:ListBucket are not permitted. Interestingly, while the policy grants broad public access, it enforces a specific condition (s3:prefix) to limit the scope of access. Despite this, the unrestricted s3:GetObject action for files/* poses a potential risk of data exfiltration.
+This challenge assesses the ability to recognize authentication protocols, retrieve important information from a web page, and appropriately implement AWS CLI commands to ensure secure connection with AWS services. It emphasizes security best practices by utilizing Cognito for temporary credential management, hence mitigating the risk associated with static AWS credentials. Key considerations include correctly configuring IAM roles and permissions for Cognito identities, guaranteeing accurate region specifications, and dealing with any issues such as insufficient permissions or erroneous identity pool setups.
 
 ## Solution
 
-1. To retrieve the flag, use the AWS CLI to list the contents of the files/ directory by running the command: 
-aws s3 ls s3://thebigiamchallenge-storage-9979f4b/files/ --no-sign-request. 
-This will display all accessible files within the files/ directory. 
+1. To solve this challenge, we use the AWS CLI to obtain temporary credentials from Amazon Cognito and interact with an SQS queue. First, retrieve an identity ID using the command:
 
-2. Next, download the flag1.txt file from the bucket using the command: aws s3 cp s3://thebigiamchallenge-storage-9979f4b/files/flag1.txt /tmp/ --no-sign-request. This will save the flag file to your local /tmp/ directory.
+aws cognito-identity get-id --identity-pool-id "us-east-1:c6f3eb2e-3cb5-404e-93bc-f0bdf7ad042e"
+
+2. The identity pool ID can be found in the JavaScript code of the challenge page. Next, obtain temporary AWS credentials for that identity using:
+
+aws cognito-identity get-credentials-for-identity --identity-id "us-east-1:9ea8f9af-f687-439b-951d-0e83653f6be7"
+
+3. Then, verify the credentials with:
+
+aws sts get-caller-identity --profile challenge2
+
+4. Once verified, send a message to the SQS queue using:
+
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/092297851374/wiz-tbic-analytics-sqs-queue-ca7a1b2 --message-body "Hello, World" --profile challenge2 --region us-east-1
+
+5. Finally, retrieve the message with:
+
+aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/092297851374/wiz-tbic-analytics-sqs-queue-ca7a1b2 --profile challenge2 --region us-east-1
+
+6. Both SQS commands use the --profile challenge2 and --region us-east-1 flags to specify the authentication profile and region. Upon receiving the message, a link to an HTML page was provided in response.
 
 ## Reflection
-My approach involved analyzing the IAM policy to identify the allowed actions and using the AWS CLI with the --no-sign-request flag for anonymous access. 
-The biggest challenge was understanding the exact scope of the Condition and ensuring the prefix matched the required format. 
-I overcame this by carefully reviewing the policy and testing commands with the --no-sign-request flag. 
-The breakthrough came when I realized the condition enforced on the prefix, which helped narrow the focus to the files/ directory. 
-From a blue team perspective, this challenge highlights the importance of avoiding public access to sensitive resources, even with conditions. Stricter measures, such as IP whitelisting, requiring AWS credentials, and regular audits of IAM policies, are essential to ensure the principle of least privilege is upheld.
+Solving Big IAM Challenge 2 was a valuable exercise in AWS identity management, temporary credentials, and secure access to cloud services. Extracting the identity pool ID from JavaScript reinforced the importance of analyzing web authentication mechanisms. Using AWS Cognito for temporary credentials highlighted best practices in cloud security, while verifying them with aws sts get-caller-identity ensured proper authentication. Sending and receiving messages via Amazon SQS demonstrated real-world applications of queue-based communication. Overall, the challenge emphasized secure authentication, IAM role configurations, and AWS CLI troubleshooting, making it a great hands-on learning experience.
