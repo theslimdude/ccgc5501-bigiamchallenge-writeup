@@ -5,7 +5,6 @@ The second challenge in The Big IAM Challenge involves an SQS (Simple Queue Serv
 
 ## IAM Policy
 
-{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -18,7 +17,6 @@ The second challenge in The Big IAM Challenge involves an SQS (Simple Queue Serv
             "Resource": "arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2"
         }
     ]
-}
 
 ## Analysis about the IAM policy
 
