@@ -7,16 +7,17 @@ The second challenge in The Big IAM Challenge involves an SQS (Simple Queue Serv
 
 {
     "Version": "2012-10-17",
-    "Statement": 
+    "Statement": [
         {
             "Effect": "Allow",
             "Principal": "*",
-            "Action": 
+            "Action": [
                 "sqs:SendMessage",
                 "sqs:ReceiveMessage"
-            ,
+            ],
             "Resource": "arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2"
         }
+    ]
 }
 
 ## Analysis about the IAM policy
