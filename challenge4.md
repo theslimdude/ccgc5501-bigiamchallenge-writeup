@@ -4,7 +4,7 @@
 The challenge needs us to get a flag from an AWS S3 bucket using the permissions granted to us by the IAM policy.
 
 ## IAM Policy
-
+```
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -30,7 +30,7 @@ The challenge needs us to get a flag from an AWS S3 bucket using the permissions
     }
   ]
 }
-
+```
     
 
 ## Analysis about the IAM policy
