@@ -9,8 +9,8 @@ The Bastion 100 challenge falls under the "Assumed Breach: Application Compromis
 
 To begin, I needed to enable the challenge by modifying the Terraform configuration:
 
-    ```Updated the file cloudfoxable/aws/terraform.tfvars and set bastion_enabled = true.
-    Executed terraform apply to provision the required AWS infrastructure.```
+    Updated the file cloudfoxable/aws/terraform.tfvars and set bastion_enabled = true.
+    Executed terraform apply to provision the required AWS infrastructure.
 
 2. Identifying the EC2 Instance
 
@@ -48,8 +48,8 @@ Cleanup
 
 To prevent unnecessary resource usage, I cleaned up the environment after obtaining the flag by:
 
-    ```Modifying terraform.tfvars and setting bastion_enabled = false.
-    Running terraform apply to remove the deployed resources.```
+    Modifying terraform.tfvars and setting bastion_enabled = false.
+    Running terraform apply to remove the deployed resources.
 
 ## Key Takeaways
 
