@@ -24,8 +24,8 @@ This provided details about the EC2 instances, including the instance ID and oth
 
 Instead of using traditional SSH access, the challenge encouraged the use of AWS Systems Manager (SSM). To connect, I:
 
-    ```Installed the AWS Session Manager plugin.
-    Used the loot file to execute the required command.```
+    Installed the AWS Session Manager plugin.
+    Used the loot file to execute the required command.
 
 This allowed me to establish a session with the instance without needing SSH keys.
 
