@@ -2,50 +2,38 @@
 
 **Challenge Statement**
 
-The main goal of this challenge was to retrieve a secret from AWS Systems Manager (SSM) by assuming an IAM role with the right permissions. It focused on understanding AWS IAM roles, trust policies, and how to access protected secrets
+The objective of this challenge was to access a secret stored in AWS Systems Manager (SSM) by assuming a specific IAM role that had the required permissions. The challenge tested understanding of IAM roles, trust relationships, and how to securely access secrets using the AWS CLI.
 
 **Short analysis**
 
-This challenge focused on working with IAM roles, permissions, and AWS CLI. The goal was to assume the "Alexander-Arnold" IAM role using a non-root user. I reviewed the role’s policies, updated its trust relationship to allow access, and then used the role to retrieve a secret from AWS Systems Manager (SSM). Once the role was assumed, I had the necessary permissions to access the secret and complete the challenge.
-
-**Key Tasks**:
-
-Role Assumption: The non-root user initially lacked permission to assume the role.
-
-Policy Update: I modified the trust policy to allow the non-root user access.
-
-Secret Retrieval: Used AWS CLI to fetch the secret from AWS SSM.
+This task involved IAM role assumption, policy inspection, and secret retrieval. The key requirement was to assume the "Alexander-Arnold" IAM role using a non-root IAM user. Initially, the user lacked the necessary permissions due to a restrictive trust policy. After updating the trust relationship to grant access, I was able to assume the role and retrieve the secret from AWS SSM.
 
 
 **Steps Taken to Solve the Challenge**
 
-**Steps-1** - I first tried to assume the "Alexander-Arnold" role using the AWS CLI with the following command:
+**Steps-1** - I attempted to assume the role "Alexander-Arnold" using the AWS CLI with the following command:
 
   aws sts assume-role --role-arn arn:aws:iam::307946660251:role/Alexander-Arnold --role-session-name Alexander-Arnold
 
-But this attempt failed because the non-root user did not have the required permissions to assume the role.
+This failed because the user didn’t have permission to assume the role.
 
-**Steps-2** - Modified the Trust Relationship
+**Steps-2** - I identified the issue in the trust relationship of the role and updated it to include the non-root user as a valid principal.
 
-**Steps-3** - Assumed Role Access: After updating the trust policy, I successfully assumed the "Alexander-Arnold" role by executing the command: 
+**Steps-3** - After updating the trust policy, I retried the assume-role command and successfully received temporary credentials.
 
   aws sts assume-role --role-arn arn:aws:iam::307946660251:role/Alexander-Arnold --role-session-name Alexander-Arnold
   
 This gave temporary security credentials.
 
-**Steps-4** - Secret Retrieval: With the correct permissions in place, I used the AWS CLI to retrieve the secret stored in AWS Systems Manager (SSM) by running: 
+**Steps-4** - Using the assumed role credentials, I ran:
 
  aws secretsmanager get-secret-value --secret-id DomainAdministrator-Credentials --region us-west-2 --profile assumed-role
  
 This returned the secret: 
     FLAG{backwards::IfYouFindSomethingInterstingFindWhoHasAccessToIt}
 
-**Steps-5** - I reviewed the permissions linked to the "Alexander-Arnold" role and confirmed that it had the necessary access to retrieve the secret. The attached policies were properly configured and matched the challenge requirements.
+**Steps-5** - I also reviewed the attached IAM policies for the role to confirm it had the necessary permissions for Secrets Manager access.
 
 **Reflection**
 
-In this challenge, my goal was to assume the "Alexander-Arnold" IAM role and retrieve a secret from AWS Systems Manager (SSM). I followed a structured approach using AWS CLI to analyze permissions, understand the role configuration, and access the required secret.
-
-The main obstacle was the trust policy of the IAM role, which initially did not allow the non-root user to assume it. I overcame this by updating the trust policy to include the non-root user as a valid principal. This change allowed me to assume the role successfully and retrieve the flag using AWS CLI.
-
-The key breakthrough came when I identified that the trust relationship was the issue and made the necessary policy change.
+This challenge highlighted the importance of understanding how IAM trust relationships work. The main blocker was the trust policy, which didn’t initially allow the user to assume the role. Identifying and correcting that issue was the key to progressing. Once that was resolved, the rest of the process—assuming the role and retrieving the secret—went smoothly using standard AWS CLI commands. The experience reinforced how crucial trust policies are in controlling access to sensitive resources in AWS.
