@@ -13,7 +13,9 @@ This task involved IAM role assumption, policy inspection, and secret retrieval.
 
 **Steps-1** - I attempted to assume the role "Alexander-Arnold" using the AWS CLI with the following command:
 
+```
   aws sts assume-role --role-arn arn:aws:iam::307946660251:role/Alexander-Arnold --role-session-name Alexander-Arnold
+```
 
 This failed because the user didn’t have permission to assume the role.
 
@@ -21,16 +23,23 @@ This failed because the user didn’t have permission to assume the role.
 
 **Steps-3** - After updating the trust policy, I retried the assume-role command and successfully received temporary credentials.
 
+```
   aws sts assume-role --role-arn arn:aws:iam::307946660251:role/Alexander-Arnold --role-session-name Alexander-Arnold
+```
   
 This gave temporary security credentials.
 
 **Steps-4** - Using the assumed role credentials, I ran:
 
+```
  aws secretsmanager get-secret-value --secret-id DomainAdministrator-Credentials --region us-west-2 --profile assumed-role
+```
  
 This returned the secret: 
+
+```
     FLAG{backwards::IfYouFindSomethingInterstingFindWhoHasAccessToIt}
+```
 
 **Steps-5** - I also reviewed the attached IAM policies for the role to confirm it had the necessary permissions for Secrets Manager access.
 
